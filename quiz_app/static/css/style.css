@@ -27,7 +27,7 @@ body {
 }
 
 .nav-link {
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: #fff !important;
     padding: 8px 15px !important;
     margin: 0 5px;
     border-radius: 4px;
@@ -36,7 +36,7 @@ body {
 
 .nav-link:hover {
     color: #fff !important;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: transparent;
     transition: none;
 }
 
@@ -58,7 +58,7 @@ body {
 }
 
 .btn-custom:hover {
-    background-color: #333;
+    background-color: #000;
     color: #fff;
     transition: none;
     transform: none;
@@ -76,7 +76,7 @@ body {
 }
 
 .btn-custom-secondary:hover {
-    background-color: #5a6268;
+    background-color: #6c757d;
     color: #fff;
     transition: none;
     transform: none;
