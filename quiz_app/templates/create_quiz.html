@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Create Quiz - Quiz App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Create New Quiz</h2>
+    <div class="card">
+        <div class="card-body">
+            <form id="quizForm" method="POST">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Quiz Title</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="time_limit" class="form-label">Time Limit (minutes)</label>
+                    <input type="number" class="form-control" id="time_limit" name="time_limit" min="1" required>
+                </div>
+
+                <div id="questions-container">
+                    <h4 class="mt-4 mb-3">Questions</h4>
+                    <div class="question-item card mb-3">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Question 1</label>
+                                <input type="text" class="form-control" name="questions[0][text]" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Options (one per line)</label>
+                                <textarea class="form-control" name="questions[0][options]" rows="4" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Correct Answer</label>
+                                <input type="text" class="form-control" name="questions[0][correct_answer]" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Points</label>
+                                <input type="number" class="form-control" name="questions[0][points]" value="1" min="1" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-custom-secondary mb-3" onclick="addQuestion()">
+                    <i class="bi bi-plus-lg me-2"></i>Add Another Question
+                </button>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-custom">
+                        <i class="bi bi-check-circle me-2"></i>Create Quiz
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let questionCount = 1;
+
+function addQuestion() {
+    const container = document.getElementById('questions-container');
+    const questionDiv = document.createElement('div');
+    questionDiv.className = 'question-item card mb-3';
+    questionDiv.innerHTML = `
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <label class="form-label">Question ${questionCount + 1}</label>
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeQuestion(this)">Remove</button>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" name="questions[${questionCount}][text]" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Options (one per line)</label>
+                <textarea class="form-control" name="questions[${questionCount}][options]" rows="4" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Correct Answer</label>
+                <input type="text" class="form-control" name="questions[${questionCount}][correct_answer]" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Points</label>
+                <input type="number" class="form-control" name="questions[${questionCount}][points]" value="1" min="1" required>
+            </div>
+        </div>
+    `;
+    container.appendChild(questionDiv);
+    questionCount++;
+}
+
+function removeQuestion(button) {
+    button.closest('.question-item').remove();
+}
+
+document.getElementById('quizForm').addEventListener('submit', function(e) {
+    const questions = document.querySelectorAll('.question-item');
+    if (questions.length === 0) {
+        e.preventDefault();
+        alert('Please add at least one question to the quiz.');
+    }
+});
+</script>
+{% endblock %} 

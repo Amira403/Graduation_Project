@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Quiz App{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 class="display-4 mb-4">Welcome to Quiz App</h1>
+    {% if current_user.is_authenticated %}
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Welcome back, {{ current_user.username }}!</h5>
+                        <p class="card-text">Ready to test your knowledge?</p>
+                        <div class="d-flex justify-content-center">
+                            <a href="{{ url_for('create_quiz') }}" class="btn btn-custom">
+                                <i class="bi bi-plus-circle me-2"></i>Create Quiz
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="mb-4">Available Quizzes</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for quiz in quizzes %}
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ quiz.title }}</h5>
+                        <p class="card-text">{{ quiz.description }}</p>
+                        <div class="quiz-info mb-3">
+                            <small class="text-muted d-block">
+                                <i class="bi bi-clock"></i> Time limit: 
+                                {{ "%d:%02d"|format(quiz.time_limit // 60, quiz.time_limit % 60) }}
+                            </small>
+                            <small class="text-muted d-block">
+                                <i class="bi bi-question-circle"></i> Questions: 
+                                {{ quiz.questions|length }}
+                            </small>
+                            <small class="text-muted d-block">
+                                <i class="bi bi-person"></i> Created by: 
+                                {% if quiz.creator_id == current_user.id %}
+                                    you
+                                {% else %}
+                                    {{ quiz.creator.username }}
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="d-grid">
+                            <a href="{{ url_for('take_quiz', quiz_id=quiz.id) }}" class="btn btn-custom">
+                                <i class="bi bi-play-circle me-2"></i>Start Quiz
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="lead">Test your knowledge with our interactive quizzes!</p>
+        <div class="mt-4">
+            <a href="{{ url_for('login') }}" class="btn btn-custom me-2">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </a>
+            <a href="{{ url_for('register') }}" class="btn btn-custom-secondary">
+                <i class="bi bi-person-plus me-2"></i>Register
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

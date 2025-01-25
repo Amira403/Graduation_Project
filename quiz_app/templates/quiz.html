@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}{{ quiz.title }} - Quiz App{% endblock %}
+
+{% block content %}
+<div class="quiz-container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>{{ quiz.title }}</h2>
+            <p class="lead">{{ quiz.description }}</p>
+        </div>
+        <div class="col-auto">
+            <div class="timer-container">
+                <div class="timer" id="timer">
+                    Time remaining: <span id="time-display">--:--</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form id="quiz-form">
+        {% for question in quiz.questions %}
+        <div class="card mb-4 question-card" data-question-id="{{ question.id }}">
+            <div class="card-body">
+                <h5 class="card-title">Question {{ loop.index }}</h5>
+                <p class="card-text">{{ question.question_text }}</p>
+                <div class="options">
+                    {% for option in question.get_options() %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" 
+                               name="question_{{ question.id }}" 
+                               id="q{{ question.id }}_{{ loop.index }}"
+                               value="{{ option }}">
+                        <label class="form-check-label" for="q{{ question.id }}_{{ loop.index }}">
+                            {{ option }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-custom btn-lg">
+                <i class="bi bi-check-circle me-2"></i>Submit Quiz
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let startTime = Date.now();
+let timeLimit = {{ quiz.time_limit }};
+let timer;
+
+function updateTimer() {
+    const now = Date.now();
+    const timeElapsed = Math.floor((now - startTime) / 1000);
+    const timeRemaining = timeLimit - timeElapsed;
+
+    if (timeRemaining <= 0) {
+        clearInterval(timer);
+        submitQuiz();
+        return;
+    }
+
+    const minutes = Math.floor(timeRemaining / 60);
+    const seconds = timeRemaining % 60;
+    document.getElementById('time-display').textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function submitQuiz() {
+    const answers = {};
+    document.querySelectorAll('.question-card').forEach(card => {
+        const questionId = card.dataset.questionId;
+        const selectedOption = card.querySelector('input[type="radio"]:checked');
+        if (selectedOption) {
+            answers[questionId] = selectedOption.value;
+        }
+    });
+
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+
+    fetch(`/quiz/{{ quiz.id }}/submit`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            answers: answers,
+            time_taken: timeTaken
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        window.location.href = "{{ url_for('view_results') }}";
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('There was an error submitting your quiz. Please try again.');
+    });
+}
+
+document.getElementById('quiz-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    submitQuiz();
+});
+
+// Start the timer
+timer = setInterval(updateTimer, 1000);
+updateTimer();
+</script>
+{% endblock %} 

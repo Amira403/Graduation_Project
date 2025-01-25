@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Results - Quiz App{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Your Quiz Results</h2>
+
+    {% if results %}
+    <div class="row">
+        {% for result in results %}
+        {% set total_points = namespace(value=0) %}
+        {% for question in result.quiz.questions %}
+            {% set total_points.value = total_points.value + question.points %}
+        {% endfor %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">{{ result.quiz.title }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="result-stats">
+                        <p class="mb-2">
+                            <strong>Score:</strong> 
+                            {{ result.score }} / {{ total_points.value }}
+                        </p>
+                        <p class="mb-2">
+                            <strong>Percentage:</strong>
+                            {% if total_points.value > 0 %}
+                                {{ "%.1f"|format(result.score / total_points.value * 100) }}%
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </p>
+                        <p class="mb-2">
+                            <strong>Time Taken:</strong>
+                            {% if result.time_taken %}
+                                {{ "%d:%02d"|format(result.time_taken // 60, result.time_taken % 60) }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </p>
+                        <p class="mb-0">
+                            <strong>Completed:</strong>
+                            {{ result.completed_at.strftime('%Y-%m-%d %H:%M') }}
+                        </p>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline-primary btn-sm" 
+                            type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#answers-{{ result.id }}">
+                        View Details
+                    </button>
+                </div>
+                <div class="collapse" id="answers-{{ result.id }}">
+                    <div class="card-body border-top">
+                        <h6>Your Answers:</h6>
+                        {% for question in result.quiz.questions %}
+                        <div class="mb-3">
+                            <p class="mb-1"><strong>Q{{ loop.index }}:</strong> {{ question.question_text }}</p>
+                            <p class="mb-1">
+                                <span class="text-muted">Your answer:</span>
+                                {% set user_answer = result.get_answers().get(question.id|string, 'Not answered') %}
+                                {% if user_answer == question.correct_answer %}
+                                    <span class="text-success">{{ user_answer }}</span>
+                                {% else %}
+                                    <span class="text-danger">{{ user_answer }}</span>
+                                {% endif %}
+                            </p>
+                            {% if user_answer != question.correct_answer %}
+                            <p class="mb-0">
+                                <span class="text-muted">Correct answer:</span>
+                                <span class="text-success">{{ question.correct_answer }}</span>
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p class="mb-0">You haven't taken any quizzes yet. <a href="{{ url_for('index') }}">Start a quiz now!</a></p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 
