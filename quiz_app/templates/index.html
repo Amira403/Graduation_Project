@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="text-center mb-5">
-    <h1 class="display-4 mb-4">Welcome to Quiz App</h1>
+    <h1 class="display-4 mb-4">Master Your Knowledge</h1>
     {% if current_user.is_authenticated %}
         <div class="row justify-content-center mb-5">
             <div class="col-md-6">
@@ -59,7 +59,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <p class="lead">Test your knowledge with our interactive quizzes!</p>
+        <p class="lead">Challenge yourself with exciting quizzes and discover new topics!</p>
         <div class="mt-4">
             <a href="{{ url_for('login') }}" class="btn btn-custom me-2">
                 Login
