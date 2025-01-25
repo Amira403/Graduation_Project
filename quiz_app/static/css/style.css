@@ -31,15 +31,18 @@ body {
     padding: 8px 15px !important;
     margin: 0 5px;
     border-radius: 4px;
+    transition: none;
 }
 
 .nav-link:hover {
     color: #fff !important;
     background-color: rgba(255, 255, 255, 0.1);
+    transition: none;
 }
 
 .navbar-toggler {
     border-color: rgba(255, 255, 255, 0.7);
+    transition: none;
 }
 
 /* Custom Button Styles */
@@ -50,11 +53,15 @@ body {
     padding: 10px 20px;
     border-radius: 5px;
     font-weight: 500;
+    transition: none;
+    transform: none;
 }
 
 .btn-custom:hover {
     background-color: #333;
     color: #fff;
+    transition: none;
+    transform: none;
 }
 
 .btn-custom-secondary {
@@ -64,11 +71,15 @@ body {
     padding: 10px 20px;
     border-radius: 5px;
     font-weight: 500;
+    transition: none;
+    transform: none;
 }
 
 .btn-custom-secondary:hover {
     background-color: #5a6268;
     color: #fff;
+    transition: none;
+    transform: none;
 }
 
 /* Card Styles */
@@ -76,10 +87,13 @@ body {
     border: none;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+    transition: none;
+    transform: none;
 }
 
 .card:hover {
     transform: none;
+    transition: none;
 }
 
 .alert {
